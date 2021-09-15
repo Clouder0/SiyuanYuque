@@ -16,7 +16,7 @@ Execute like this:
 python -m SiyuanYuque
 ```
 
-Remember to create a `config.toml` config file in the current directory.
+Remember to create a `sqconfig.toml` config file in the current directory.
 
 ```ini
 user_token = ""
