@@ -20,6 +20,8 @@ async def handle_id(block):
             "body": await siyuan.export_md_content(block["id"]),
             "_force_asl": 1
         })
+        if ret["data"]["id"] > 0:
+            print("Updated {} successfully.".format(block["content"]))
     else:
         if "custom-yuque-workspace" not in attrs:
             raise Exception("Yuque workspace not set.")
