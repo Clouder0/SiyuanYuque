@@ -8,6 +8,7 @@ import time
 
 
 yuque = Yuque(api_host=conf["api_host"], user_token=conf["user_token"])
+handled = []
 
 
 async def create_doc(block, id="", workspace="", public=1, slug=""):
@@ -39,6 +40,9 @@ async def update_doc(block, id="", workspace="", public=1, slug=""):
 
 
 async def handle_block(block, id="", workspace="", public=1, slug=""):
+    if block["id"] in handled:
+        return
+    handled.append(block["id"])
     attrs = siyuan.parse_ial(block["ial"])
     workspace = attrs.get("custom-yuque-workspace", workspace)
     id = attrs.get("custom-yuque-id", id)
