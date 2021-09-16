@@ -10,36 +10,60 @@ import time
 yuque = Yuque(api_host=conf["api_host"], user_token=conf["user_token"])
 
 
-async def handle_id(block):
-    attrs = siyuan.parse_ial(block["ial"])
-    if "custom-yuque-id" in attrs:
-        ret = yuque.docs.update(attrs["custom-yuque-workspace"], attrs["custom-yuque-id"], {
-            "title": block["content"],
-            "slug": block["id"],
-            "public": 1,
-            "body": await siyuan.export_md_content(block["id"]),
-            "_force_asl": 1
-        })
-        if ret["data"]["id"] > 0:
-            print("Updated {} successfully.".format(block["content"]))
+async def create_doc(block, id="", workspace="", public=1, slug=""):
+    if workspace == "":
+        raise Exception("Yuque workspace not set.")
+    ret = yuque.docs.create(workspace, {
+        "title": block["content"],
+        "slug": slug,
+        "public": public,
+        "body": await siyuan.export_md_content(block["id"])
+    })
+    if ret["data"]["id"] > 0:
+        await siyuan.set_attribute(block["id"], "custom-yuque-id", str(ret["data"]["id"]))
+        print("Added {} successfully.".format(block["content"]))
+
+
+async def update_doc(block, id="", workspace="", public=1, slug=""):
+    ret = yuque.docs.update(workspace, id, {
+        "title": block["content"],
+        "slug": slug,
+        "public": public,
+        "body": await siyuan.export_md_content(block["id"]),
+        "_force_asl": 1
+    })
+    if ret["data"]["id"] > 0:
+        print("Updated {} successfully.".format(block["content"]))
     else:
-        if "custom-yuque-workspace" not in attrs:
-            raise Exception("Yuque workspace not set.")
-        ret = yuque.docs.create(attrs["custom-yuque-workspace"], {
-            "title": block["content"],
-            "slug": block["id"],
-            "public": 1,
-            "body": await siyuan.export_md_content(block["id"])
-        })
-        if ret["data"]["id"] > 0:
-            await siyuan.set_attribute(block["id"], "custom-yuque-id", str(ret["data"]["id"]))
-            print("Added {} successfully.".format(block["content"]))
+        create_doc(block, id, workspace, public, slug)
+
+
+async def handle_block(block, id="", workspace="", public=1, slug=""):
+    attrs = siyuan.parse_ial(block["ial"])
+    workspace = attrs.get("custom-yuque-workspace", workspace)
+    id = attrs.get("custom-yuque-id", id)
+    if slug == "":
+        slug = attrs.get("custom-yuque-slug", block["id"])
+    public = int(attrs.get("custom-yuque-public", public))
+    if id == "":
+        await create_doc(block, id, workspace, public, slug)
+    else:
+        await update_doc(block, id, workspace, public, slug)
+
+
+async def handle_custom_sync(sync):
+    blocks = await siyuan.query_sql(sync["sql"] + " AND updated > '{}'".format(conf["last_sync_time"]))
+    await asyncio.gather(*[handle_block(x, workspace=sync["yuque-workspace"]) for x in blocks])
 
 
 async def execute():
     start_time = time.perf_counter()
     all_blocks = await siyuan.query_sql("SELECT * FROM blocks WHERE id IN ( SELECT block_id FROM attributes AS a WHERE a.name ='custom-yuque' AND a.value = 'true') AND type='d' AND updated>'{}'".format(conf["last_sync_time"]))
-    await asyncio.gather(*[handle_id(x) for x in all_blocks])
+    tasks = [asyncio.create_task(handle_block(x)) for x in all_blocks]
+    if "custom_sync" in conf:
+        for x in conf["custom_sync"]:
+            tasks.append(asyncio.create_task(handle_custom_sync(x)))
+    await asyncio.gather(*tasks)
     conf["last_sync_time"] = datetime.datetime.now().strftime(r"%Y%m%d%H%M%S")
     config.write_conf()
     end_time = time.perf_counter()
