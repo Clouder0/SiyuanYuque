@@ -55,3 +55,34 @@ You'll see `yuque-id` appended to your document's attributes. **Don't manually m
 That's the basic usage for the time being.
 
 **Remember not to edit the documents sync from SiYuan, as the update will be lost upon the next sync.**
+
+## Custom Sync
+
+It is supported to sync documents by SQL.
+
+A simple example:
+
+```toml
+user_token = ""
+siyuan_token = ""
+api_host = "https://www.yuque.com/api/v2"
+last_sync_time = "20210916223903"
+[[custom_sync]]
+sql = "select * from blocks where hpath like '%Math/%' and type='d'"
+yuque-workspace = "clouder0/gaokao"
+``` 
+
+Multiple custom syncs can be defined.
+
+```toml
+user_token = ""
+siyuan_token = ""
+api_host = "https://www.yuque.com/api/v2"
+last_sync_time = "20210916223903"
+[[custom_sync]]
+sql = "select * from blocks where hpath like '%Math/%' and type='d'"
+yuque-workspace = "clouder0/gaokao"
+[[custom_sync]]
+sql = "select * from blocks where hpath like '%Chinese/%' and type='d'"
+yuque-workspace = "clouder0/gaokao"
+```
