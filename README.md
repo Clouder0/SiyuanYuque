@@ -86,3 +86,11 @@ yuque-workspace = "clouder0/gaokao"
 sql = "select * from blocks where hpath like '%Chinese/%' and type='d'"
 yuque-workspace = "clouder0/gaokao"
 ```
+
+## More Config
+
+![image](https://user-images.githubusercontent.com/41664195/133639009-77031416-b9cd-4470-aa90-3f3ba00fbbd4.png)
+
+yuque-public: 1 for public and 0 for private.
+
+yuque-slug: the slug of the document. `https://www.yuque.com/siyuannote/docs/siyuanyuque`
