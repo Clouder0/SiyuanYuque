@@ -14,6 +14,7 @@ handled = []
 async def create_doc(block, id="", workspace="", public=1, slug=""):
     if workspace == "":
         raise Exception("Yuque workspace not set.")
+    print("creating doc {}.".format(block["content"]))
     ret = yuque.docs.create(workspace, {
         "title": block["content"],
         "slug": slug,
@@ -26,6 +27,7 @@ async def create_doc(block, id="", workspace="", public=1, slug=""):
 
 
 async def update_doc(block, id="", workspace="", public=1, slug=""):
+    print("updating doc {}".format(block["content"]))
     ret = yuque.docs.update(workspace, id, {
         "title": block["content"],
         "slug": slug,
