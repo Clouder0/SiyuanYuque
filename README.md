@@ -67,10 +67,11 @@ user_token = ""
 siyuan_token = ""
 api_host = "https://www.yuque.com/api/v2"
 last_sync_time = "20210916223903"
+assets_replacement = "https://b3logfile.com/siyuan/1609132319768/assets"
 [[custom_sync]]
 sql = "select * from blocks where hpath like '%Math/%' and type='d'"
 yuque-workspace = "clouder0/gaokao"
-``` 
+```
 
 Multiple custom syncs can be defined.
 
@@ -79,6 +80,7 @@ user_token = ""
 siyuan_token = ""
 api_host = "https://www.yuque.com/api/v2"
 last_sync_time = "20210916223903"
+assets_replacement = "https://b3logfile.com/siyuan/1609132319768/assets"
 [[custom_sync]]
 sql = "select * from blocks where hpath like '%Math/%' and type='d'"
 yuque-workspace = "clouder0/gaokao"
@@ -94,3 +96,8 @@ yuque-workspace = "clouder0/gaokao"
 yuque-public: 1 for public and 0 for private.
 
 yuque-slug: the slug of the document. `https://www.yuque.com/siyuannote/docs/siyuanyuque`
+
+
+## Assets Replacement
+
+Replace the `assets` string in your markdown content to support SiYuan online image.

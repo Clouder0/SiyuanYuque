@@ -26,13 +26,20 @@ async def create_doc(block, id="", workspace="", public=1, slug=""):
         print("Added {} successfully.".format(block["content"]))
 
 
+async def export_siyuan_content_by_id(id):
+    ret = await siyuan.export_md_content(id)
+    ret = ret.replace(
+        r"(assets/", r"({}/".format(conf.get("assets_replacement", "assets")))
+    return ret
+
+
 async def update_doc(block, id="", workspace="", public=1, slug=""):
     print("updating doc {}".format(block["content"]))
     ret = yuque.docs.update(workspace, id, {
         "title": block["content"],
         "slug": slug,
         "public": public,
-        "body": await siyuan.export_md_content(block["id"]),
+        "body": await export_siyuan_content_by_id(block["id"]),
         "_force_asl": 1
     })
     if ret["data"]["id"] > 0:
