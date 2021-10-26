@@ -19,17 +19,19 @@ async def create_doc(block, id="", workspace="", public=1, slug=""):
         "title": block["content"],
         "slug": slug,
         "public": public,
-        "body": await siyuan.export_md_content(block["id"])
+        "body": await export_siyuan_content_by_id(block["id"], workspace)
     })
     if ret["data"]["id"] > 0:
         await siyuan.set_attribute(block["id"], "custom-yuque-id", str(ret["data"]["id"]))
         print("Added {} successfully.".format(block["content"]))
 
 
-async def export_siyuan_content_by_id(id):
+async def export_siyuan_content_by_id(id, workspace):
     ret = await siyuan.export_md_content(id)
     ret = ret.replace(
         r"(assets/", r"({}/".format(conf.get("assets_replacement", "assets")))
+    ret = ret.replace(
+        r"siyuan://blocks", r"https://www.yuque.com/{}".format(workspace))
     return ret
 
 
@@ -40,7 +42,7 @@ async def update_doc(block, id="", workspace="", public=1, slug=""):
             "title": block["content"],
             "slug": slug,
             "public": public,
-            "body": await export_siyuan_content_by_id(block["id"]),
+            "body": await export_siyuan_content_by_id(block["id"], workspace),
             "_force_asl": 1
         })
         if ret["data"]["id"] > 0:
@@ -50,7 +52,7 @@ async def update_doc(block, id="", workspace="", public=1, slug=""):
         await create_doc(block, id, workspace, public, slug)
 
 
-async def handle_block(block, id="", workspace="", public=1, slug=""):
+async def handle_block(block, id="", workspace="", public=1, slug="", ):
     if block["id"] in handled:
         return
     try:
@@ -65,8 +67,9 @@ async def handle_block(block, id="", workspace="", public=1, slug=""):
             await create_doc(block, id, workspace, public, slug)
         else:
             await update_doc(block, id, workspace, public, slug)
-    except Exception:
+    except Exception as e:
         print("Exception Occured when handling block {}".format(block["id"]))
+        print(e)
 
 
 async def handle_custom_sync(sync):
