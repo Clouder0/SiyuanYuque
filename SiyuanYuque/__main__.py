@@ -35,33 +35,40 @@ async def export_siyuan_content_by_id(id):
 
 async def update_doc(block, id="", workspace="", public=1, slug=""):
     print("updating doc {}".format(block["content"]))
-    ret = yuque.docs.update(workspace, id, {
-        "title": block["content"],
-        "slug": slug,
-        "public": public,
-        "body": await export_siyuan_content_by_id(block["id"]),
-        "_force_asl": 1
-    })
-    if ret["data"]["id"] > 0:
-        print("Updated {} successfully.".format(block["content"]))
-    else:
-        create_doc(block, id, workspace, public, slug)
+    try:
+        ret = yuque.docs.update(workspace, id, {
+            "title": block["content"],
+            "slug": slug,
+            "public": public,
+            "body": await export_siyuan_content_by_id(block["id"]),
+            "_force_asl": 1
+        })
+        if ret["data"]["id"] > 0:
+            print("Updated {} successfully.".format(block["content"]))
+            return
+    except Exception:
+        pass
+    finally:
+        await create_doc(block, id, workspace, public, slug)
 
 
 async def handle_block(block, id="", workspace="", public=1, slug=""):
     if block["id"] in handled:
         return
-    handled.append(block["id"])
-    attrs = siyuan.parse_ial(block["ial"])
-    workspace = attrs.get("custom-yuque-workspace", workspace)
-    id = attrs.get("custom-yuque-id", id)
-    if slug == "":
-        slug = attrs.get("custom-yuque-slug", block["id"])
-    public = int(attrs.get("custom-yuque-public", public))
-    if id == "":
-        await create_doc(block, id, workspace, public, slug)
-    else:
-        await update_doc(block, id, workspace, public, slug)
+    try:
+        handled.append(block["id"])
+        attrs = siyuan.parse_ial(block["ial"])
+        workspace = attrs.get("custom-yuque-workspace", workspace)
+        id = attrs.get("custom-yuque-id", id)
+        if slug == "":
+            slug = attrs.get("custom-yuque-slug", block["id"])
+        public = int(attrs.get("custom-yuque-public", public))
+        if id == "":
+            await create_doc(block, id, workspace, public, slug)
+        else:
+            await update_doc(block, id, workspace, public, slug)
+    except Exception:
+        print("Exception Occured when handling block {}".format(block["id"]))
 
 
 async def handle_custom_sync(sync):
