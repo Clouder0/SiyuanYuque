@@ -47,8 +47,6 @@ async def update_doc(block, id="", workspace="", public=1, slug=""):
             print("Updated {} successfully.".format(block["content"]))
             return
     except Exception:
-        pass
-    finally:
         await create_doc(block, id, workspace, public, slug)
 
 
