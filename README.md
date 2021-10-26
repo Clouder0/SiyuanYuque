@@ -2,6 +2,11 @@
 
 Sync SiYuanNote & Yuque.
 
+- Sync Setting in doc attribute.
+- Batch Sync Via SQL
+- SiYuan Image Hosting Supported
+- Internal Link Supported
+
 ## Install
 
 Use pip to install.
@@ -101,3 +106,9 @@ yuque-slug: the slug of the document. `https://www.yuque.com/siyuannote/docs/siy
 ## Assets Replacement
 
 Replace the `assets` string in your markdown content to support SiYuan online image.
+
+## Internal Link
+
+SiYuan-Setting: Ref Block: Anchor Text with block URL.
+
+This script will replace `siyuan://blocks` with `https://yuque.com/{workspace}` so that your ref blocks that have been exported and in the same workspace of yuque will be accessible.
