@@ -1,6 +1,6 @@
 import asyncio
 import datetime
-from . import siyuanHelper as siyuan
+from siyuanhelper import helper as siyuan
 from yuque_py import Yuque
 from .config import conf
 from . import config
