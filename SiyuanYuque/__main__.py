@@ -5,6 +5,7 @@ from yuque_py import Yuque
 from .config import conf
 from . import config
 import time
+import regex
 
 
 yuque = Yuque(api_host=conf["api_host"], user_token=conf["user_token"])
@@ -32,6 +33,9 @@ async def export_siyuan_content_by_id(id, workspace):
         r"(assets/", r"({}/".format(conf.get("assets_replacement", "assets")))
     ret = ret.replace(
         r"siyuan://blocks", r"https://www.yuque.com/{}".format(workspace))
+    matches = regex.finditer(r"\$(.+?)\$", ret)
+    for x in matches:
+        ret = ret.replace(x.group(0), "${}$".format(x.group(1).strip()))
     return ret
 
 
