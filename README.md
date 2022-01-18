@@ -112,3 +112,16 @@ Replace the `assets` string in your markdown content to support SiYuan online im
 SiYuan-Setting: Ref Block: Anchor Text with block URL.
 
 This script will replace `siyuan://blocks` with `https://yuque.com/{workspace}` so that your ref blocks that have been exported and in the same workspace of yuque will be accessible.
+
+## Square Support
+
+For yuque square, you can modify `api_host` to operate in squares.  
+
+For example, you'd like to sync in a square `clouder.yuque.com`, then you should change your config:
+
+```toml
+api_host = "https://clouder.yuque.com/api/v2"
+```
+
+Do bear in mind that once you decide to use a square, you can no longer stay synced with the original public `www.yuque.com`.  
+Theoretically, there exists the possibility to support both at the same time, but I haven't seen such demand yet.
