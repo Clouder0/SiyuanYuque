@@ -6,6 +6,7 @@ from .config import conf
 from . import config
 import time
 import regex
+import aiohttp
 
 
 yuque = Yuque(api_host=conf["api_host"], user_token=conf["user_token"])
@@ -82,6 +83,8 @@ async def handle_custom_sync(sync):
 
 
 async def execute():
+    session = aiohttp.ClientSession()
+    siyuan.set_session(session)
     start_time = time.perf_counter()
     all_blocks = await siyuan.query_sql("SELECT * FROM blocks WHERE id IN ( SELECT block_id FROM attributes AS a WHERE a.name ='custom-yuque' AND a.value = 'true') AND type='d' AND updated>'{}'".format(conf["last_sync_time"]))
     tasks = [asyncio.create_task(handle_block(x)) for x in all_blocks]
@@ -93,6 +96,7 @@ async def execute():
     config.write_conf()
     end_time = time.perf_counter()
     print("Finished. Total time: {}s.".format(end_time - start_time))
+    await session.close()
 
 
 if __name__ == "__main__":
