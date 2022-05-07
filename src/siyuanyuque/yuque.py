@@ -1,23 +1,28 @@
 """Basic Yuque API wrapper. The existing libraries are not satisfying."""
-import aiohttp
+from __future__ import annotations
+
+import httpx
 
 
 class Yuque:
     """Yuque API Instance."""
 
-    def __init__(self, token: str, base_url: str = "https://www.yuque.com/api/v2"):
-        self.session = aiohttp.ClientSession(
+    def __init__(self, token: str, base_url: str):
+        self.client = httpx.Client(
             base_url=base_url,
             headers={
                 "Content-Type": "application/json",
-                "User-Agent": "siyuanyuque",
+                "User-Agent": "api",
                 "X-Auth-Token": token,
             },
         )
 
-    async def create_doc(
+    def close(self) -> None:
+        self.client.close()
+
+    def create_doc(
         self,
-        namespace: str,
+        workspace: str,
         title: str,
         slug: str,
         body: str,
@@ -25,7 +30,7 @@ class Yuque:
         """Create a Yuque Doc and return its id.
 
         Args:
-            namespace (str): which repo to create the doc in, format `{username}/{reponame}`
+            workspace (str): which repo to create the doc in, format `{username}/{reponame}`
             title (str): doc title
             slug (str): doc slug, in the url
             body (str): doc body
@@ -33,20 +38,18 @@ class Yuque:
         Returns:
             str: Yuque Doc id.
         """
-        async with self.session.post(
-            f"/repos/{namespace}/docs",
-            data={"title": title, "slug": slug, "body": body, "format": "markdown"},
-        ) as res:
-            if not res.ok:
-                raise Exception()
-            return res.json()["data"]["id"]
+        res = self.client.post(
+            f"/repos/{workspace}/docs",
+            json={"title": title, "slug": slug, "body": body, "format": "markdown"},
+        )
+        return res.json()["data"]["id"]
 
-    async def update_doc(
-        self, namespace: str, id: str, title: str, slug: str, body: str
+    def update_doc(
+        self, workspace: str, id: str, title: str, slug: str, body: str
     ) -> None:
-        async with self.session.put(
-            f"repos/{namespace}/docs/{id}",
-            data={"title": title, "slug": slug, "body": body, "_force_asl": 1},
-        ) as res:
-            if not res.ok:
-                raise Exception()
+        ret = self.client.put(
+            f"/repos/{workspace}/docs/{id}",
+            json={"title": title, "slug": slug, "body": body, "_force_asl": 1},
+        )
+        if ret.status_code != 200:
+            raise Exception(ret)

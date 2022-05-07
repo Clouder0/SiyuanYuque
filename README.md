@@ -1,5 +1,7 @@
 # SiyuanYuque
 
+[Chinese Document](https://www.yuque.com/clouder0/siyuan/20210916225709-g7zckw3#533691a2)
+
 Sync SiYuanNote & Yuque.
 
 - Sync Setting in doc attribute.
