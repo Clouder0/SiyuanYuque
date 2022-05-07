@@ -1,0 +1,85 @@
+default_language_version:
+  python: python3.10
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.2.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^.*\.md$
+      - id: end-of-file-fixer
+        exclude: ^.*\.egg-info/
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-toml
+      - id: check-yaml
+      - id: pretty-format-json
+        args: [--autofix, --no-ensure-ascii, --no-sort-keys]
+      - id: check-ast
+      - id: debug-statements
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+        name: isort (python)
+        args: [--add-import, from __future__ import annotations]
+
+
+  - repo: https://github.com/PyCQA/flake8
+    rev: 4.0.1
+    hooks:
+      - id: flake8
+        files: src/
+        additional_dependencies: &flake8_deps
+          - flake8-bugbear==22.3.23
+          - flake8-comprehensions==3.8.0
+          - flake8-quotes==3.3.1
+          - flake8-simplify==0.19.2
+          - flake8-use-fstring==1.3
+          - pep8-naming==0.12.1
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.950
+    hooks:
+      - id: mypy
+        files: src/
+        additional_dependencies:
+          - "types-aiofiles"
+          - "tinydb"
+        args:
+          - "--no-strict-optional"
+          - "--ignore-missing-imports"
+          - "--python-version=3.10"
+          - "--disallow-untyped-defs"
+          - "--disallow-incomplete-defs"
+          - "--check-untyped-defs"
+          - "--warn-redundant-casts"
+          - "--warn-unreachable"
+          - "--install-types"
+
+
+  - repo: https://github.com/asottile/yesqa
+    rev: v1.3.0
+    hooks:
+      - id: yesqa
+        additional_dependencies: *flake8_deps
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.32.0
+    hooks:
+      - id: pyupgrade
+        args: [--py37-plus]
+        exclude: ^(install|get)-poetry.py$
+
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black
+        language_version: python3.10
+
+  - repo: https://github.com/pycqa/pydocstyle
+    rev: 6.1.1
+    hooks:
+      - id: pydocstyle
+        language_version: python3.10

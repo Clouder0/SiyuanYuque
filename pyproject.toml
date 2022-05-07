@@ -1,6 +1,52 @@
-[build-system]
-requires = [
-    "setuptools>=42",
-    "wheel"
+[tool.poetry]
+name = "siyuanyuque"
+version = "0.1.0"
+description = "Sync SiYuan with Yuque"
+authors = ["clouder <clouder0@outlook.com>"]
+license = "MIT"
+repository = "https://www.github.com/Clouder0/siyuanyuque"
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Framework :: Flake8",
+    "Framework :: Pytest",
+    "Framework :: tox",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Utilities",
+    "Typing :: Typed"
 ]
-build-backend = "setuptools.build_meta"
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "^3.9"
+siyuanhelper = "^0.1.0"
+aiohttp = "^3.8.1"
+tomli = "^2.0.1"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.950"
+pytest = "^7.1.2"
+pytest-cov = "^3.0.0"
+pytest-random-order = "^1.0.4"
+tox = "^3.25.0"
+flake8 = "^4.0.1"
+flake8-isort = "^4.1.1"
+pep8-naming = "^0.12.1"
+flake8-comprehensions = "^3.8.0"
+flake8-bugbear = "^22.4.25"
+flake8-quotes = "^3.3.1"
+flake8-simplify = "^0.19.2"
+flake8-use-fstring = "^1.3"
+pre-commit = "^2.18.1"
+black = "^22.3.0"
+pydocstyle = "^6.1.1"
+pytest-benchmark = "^3.4.1"
+pytest-asyncio-cooperative = "^0.27.0"
+isort = "^5.10.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "setuptools"]
+build-backend = "poetry.core.masonry.api"
