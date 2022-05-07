@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "siyuanyuque"
-version = "0.1.0"
+version = "0.1.1"
 description = "Sync SiYuan with Yuque"
 authors = ["clouder <clouder0@outlook.com>"]
 license = "MIT"

@@ -23,13 +23,13 @@ class Sync:
             workspace,
             block.content,
             slug,
-            await self.export_siyuan_content(block.id, workspace),
+            await self.export_siyuan_content(block, workspace),
         )
         if int(ret) > 0:
-            block.attrs.set("custom-yuque-id", ret)
-            print("Added {block.content} successfully.")
+            await block.attrs.set("custom-yuque-id", ret)
+            print(f"Added {block.content} successfully.")
         else:
-            print("Create {block.content} failed.")
+            print(f"Create {block.content} failed.")
 
     async def update_doc(
         self, block: SiyuanBlock, id: str, workspace: str, slug: str
@@ -45,9 +45,7 @@ class Sync:
                 await self.export_siyuan_content(block, workspace),
             )
             print(f"Updated {block.content} successfully.")
-        except Exception as e:
-            print("Exception occured when updating doc.")
-            print(e)
+        except Exception:
             await self.create_doc(block, workspace, slug)
 
     async def export_siyuan_content(self, block: SiyuanBlock, workspace: str) -> str:
